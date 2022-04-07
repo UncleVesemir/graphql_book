@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:graphql_book/src/presentation/screens/text_edit/model.dart';
 import 'package:meta/meta.dart';
 
 part 'notes_event.dart';

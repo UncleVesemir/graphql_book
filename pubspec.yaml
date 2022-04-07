@@ -12,11 +12,17 @@ dependencies:
   flutter:
     sdk: flutter
 
-  hexcolor: ^2.0.6
-  flutter_neumorphic: ^3.2.0
   local_auth: ^1.1.11
+
+  #UI
   drag_and_drop_lists: ^0.3.2+2
   dotted_border: ^2.0.0+2
+  flutter_slidable: ^1.2.0
+  hexcolor: ^2.0.6
+
+  # Attach files
+  file_picker: ^4.5.1
+  path_provider: ^2.0.9
 
   # State Management
   flutter_bloc: ^8.0.1

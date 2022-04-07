@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
 class DraggableList {
   String header;
@@ -12,7 +12,7 @@ class DraggableList {
 
 class DraggableListItem {
   String text;
-  Widget? image;
+  File? image;
 
   DraggableListItem({
     required this.text,
