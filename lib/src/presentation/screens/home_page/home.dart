@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_book/src/presentation/screens/text_edit/data.dart';
 import 'package:graphql_book/src/presentation/screens/text_edit/model.dart';
 import 'package:graphql_book/src/presentation/screens/text_edit/text.dart';
+import 'package:graphql_book/src/presentation/widgets/custom_inner_shadow.dart';
 import 'package:graphql_book/src/presentation/widgets/custom_list_wheel.dart';
 
 class HomePage extends StatefulWidget {
@@ -82,7 +83,7 @@ class _BookWidgetState extends State<BookWidget> {
             blurRadius: 20,
             offset: const Offset(25, 30),
             spreadRadius: 5,
-          )
+          ),
         ],
         borderRadius: const BorderRadius.only(
           topRight: Radius.circular(36),

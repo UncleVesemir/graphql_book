@@ -4,7 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 class DraggableTextWidget extends StatefulWidget {
   final String text;
-  final Function(String text, Key key) onChanged;
+  final Function(String text) onChanged;
   final Function(Key key) onDelete;
   final bool isHeader;
   const DraggableTextWidget({
@@ -42,8 +42,10 @@ class _DraggableTextWidgetState extends State<DraggableTextWidget> {
   }
 
   void _onFocusChange() {
+    if (!_focus.hasFocus) {
+      widget.onChanged(_controller.text);
+    }
     setState(() {});
-    // _focus.requestFocus();
   }
 
   @override
@@ -67,7 +69,7 @@ class _DraggableTextWidgetState extends State<DraggableTextWidget> {
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(
-          onDismissed: () => widget.onChanged(_controller.text, widget.key!),
+          onDismissed: () => widget.onChanged(_controller.text),
         ),
         children: [
           SlidableAction(
@@ -78,7 +80,7 @@ class _DraggableTextWidgetState extends State<DraggableTextWidget> {
             label: 'Share',
           ),
           SlidableAction(
-            onPressed: (ctx) => widget.onChanged(_controller.text, widget.key!),
+            onPressed: (ctx) => widget.onChanged(_controller.text),
             backgroundColor: const Color(0xFF0392CF),
             foregroundColor: Colors.white,
             icon: Icons.save,
@@ -94,15 +96,16 @@ class _DraggableTextWidgetState extends State<DraggableTextWidget> {
               padding:
                   const EdgeInsets.only(left: 10, bottom: 3, top: 3, right: 3),
               child: DottedBorder(
-                dashPattern: const [14],
+                borderType: BorderType.RRect,
+                dashPattern: const [14, 5],
                 padding: _focus.hasFocus
                     ? const EdgeInsets.all(10)
                     : const EdgeInsets.all(0),
                 color: _focus.hasFocus
                     ? Colors.blueAccent[100]!
                     : Colors.transparent,
-                radius: const Radius.circular(5),
-                strokeWidth: 2,
+                radius: const Radius.circular(12),
+                strokeWidth: 1,
                 child: TextFormField(
                   focusNode: _focus,
                   controller: _controller,
@@ -121,27 +124,28 @@ class _DraggableTextWidgetState extends State<DraggableTextWidget> {
                       : null,
                   decoration: InputDecoration(
                     suffixIcon: _focus.hasFocus
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              InkWell(
-                                onTap: () => widget.onChanged(
-                                    _controller.text, widget.key!),
-                                child: const Icon(
-                                  Icons.done,
-                                  size: 15,
-                                ),
-                              ),
-                              const SizedBox(height: 7),
-                              InkWell(
-                                onTap: () {},
-                                child: const Icon(
-                                  Icons.remove_circle_outline,
-                                  size: 15,
-                                ),
-                              ),
-                            ],
-                          )
+                        ?
+                        //  Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.end,
+                        //     children: [
+                        //       InkWell(
+                        //         onTap: () => widget.onChanged(_controller.text),
+                        //         child: const Icon(
+                        //           Icons.done,
+                        //           size: 15,
+                        //         ),
+                        //       ),
+                        //       const SizedBox(height: 35),
+                        //       InkWell(
+                        //         onTap: () {},
+                        //         child: const Icon(
+                        //           Icons.remove_circle_outline,
+                        //           size: 15,
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   )
+                        null
                         : null,
                     border: InputBorder.none,
                     hintText: '...',

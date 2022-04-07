@@ -7,7 +7,7 @@ import 'package:graphql_book/src/presentation/styles/fonts.dart';
 class DraggableImageWidget extends StatefulWidget {
   final String name;
   final File file;
-  final Function(String text, Key key) onChanged;
+  final Function(String text) onChanged;
   final Function(Key key) onDelete;
   const DraggableImageWidget({
     required this.onChanged,
@@ -43,7 +43,7 @@ class _DraggableImageWidgetState extends State<DraggableImageWidget> {
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(
-          onDismissed: () => widget.onChanged(widget.name, widget.key!),
+          onDismissed: () => widget.onChanged(widget.name),
         ),
         children: [
           SlidableAction(
@@ -54,7 +54,7 @@ class _DraggableImageWidgetState extends State<DraggableImageWidget> {
             label: 'Share',
           ),
           SlidableAction(
-            onPressed: (ctx) => widget.onChanged(widget.name, widget.key!),
+            onPressed: (ctx) => widget.onChanged(widget.name),
             backgroundColor: const Color(0xFF0392CF),
             foregroundColor: Colors.white,
             icon: Icons.save,

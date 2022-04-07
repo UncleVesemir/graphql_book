@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:graphql_book/src/presentation/screens/home.dart';
 import 'package:graphql_book/src/presentation/screens/home_page/home.dart';
 
 class App extends StatelessWidget {

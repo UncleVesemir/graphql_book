@@ -211,7 +211,7 @@ class _TextPageState extends State<TextPage> {
             key: UniqueKey(),
             text: list.header,
             isHeader: true,
-            onChanged: (text, key) => _onHeaderChanged(text, index),
+            onChanged: (text) => _onHeaderChanged(text, index),
             onDelete: (key) => _deleteList(index: index),
           ),
         ),
@@ -227,7 +227,7 @@ class _TextPageState extends State<TextPage> {
                         key: UniqueKey(),
                         name: e.text,
                         file: e.image!,
-                        onChanged: (text, key) => _onChanged(text, index, i),
+                        onChanged: (text) => _onChanged(text, index, i),
                         onDelete: (key) =>
                             _deleteTextItem(listIndex: index, itemIndex: i),
                       ),
@@ -240,7 +240,7 @@ class _TextPageState extends State<TextPage> {
                       child: DraggableTextWidget(
                         key: UniqueKey(),
                         text: e.text,
-                        onChanged: (text, key) => _onChanged(text, index, i),
+                        onChanged: (text) => _onChanged(text, index, i),
                         onDelete: (key) =>
                             _deleteTextItem(listIndex: index, itemIndex: i),
                       ),
