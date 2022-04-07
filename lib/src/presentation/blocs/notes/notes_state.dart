@@ -7,6 +7,9 @@ class NotesInitialState extends NotesState {}
 
 class NotesLoadingState extends NotesState {}
 
-class NotesLoadedState extends NotesState {}
+class NotesLoadedState extends NotesState {
+  final List<List<DraggableList>> data;
+  NotesLoadedState({required this.data});
+}
 
 class NotesEditState extends NotesState {}
