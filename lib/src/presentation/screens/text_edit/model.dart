@@ -1,5 +1,15 @@
 import 'dart:io';
 
+class BookData {
+  final List<DraggableList> content;
+  final String name;
+
+  BookData({
+    required this.content,
+    required this.name,
+  });
+}
+
 class DraggableList {
   String header;
   final List<DraggableListItem> items;

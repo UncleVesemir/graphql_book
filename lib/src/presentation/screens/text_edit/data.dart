@@ -1,5 +1,11 @@
 import 'package:graphql_book/src/presentation/screens/text_edit/model.dart';
 
+List<BookData> allBooks = [
+  BookData(content: allLists, name: 'First Book'),
+  BookData(content: allLists, name: 'Second Book'),
+  BookData(content: allLists, name: 'Third Book'),
+];
+
 List<DraggableList> allLists = [
   DraggableList(
     header: 'What is Lorem Ipsum?',

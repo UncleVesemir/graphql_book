@@ -278,7 +278,7 @@ class _TextPageState extends State<TextPage> {
                     listPadding: const EdgeInsets.only(bottom: 30),
                     listInnerDecoration: BoxDecoration(
                       // color: Theme.of(context).canvasColor,
-                      color: Colors.blueAccent.withOpacity(0.1),
+                      // color: Colors.blueAccent.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     itemDecorationWhileDragging: BoxDecoration(
