@@ -33,7 +33,7 @@ class _DraggableImageWidgetState extends State<DraggableImageWidget> {
         children: [
           SlidableAction(
             onPressed: (ctx) => widget.onDelete(widget.key!),
-            backgroundColor: const Color(0xFFFE4A49),
+            backgroundColor: Colors.redAccent[100]!,
             foregroundColor: Colors.white,
             icon: Icons.delete,
             label: 'Delete',
@@ -47,15 +47,9 @@ class _DraggableImageWidgetState extends State<DraggableImageWidget> {
         ),
         children: [
           SlidableAction(
-            onPressed: (ctx) {},
-            backgroundColor: const Color(0xFF21B7CA),
-            foregroundColor: Colors.white,
-            icon: Icons.share,
-            label: 'Share',
-          ),
-          SlidableAction(
+            flex: 4,
             onPressed: (ctx) => widget.onChanged(widget.name),
-            backgroundColor: const Color(0xFF0392CF),
+            backgroundColor: Colors.deepOrange[200]!,
             foregroundColor: Colors.white,
             icon: Icons.save,
             label: 'Save',

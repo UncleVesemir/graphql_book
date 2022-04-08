@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+
 class BookData {
   final List<DraggableList> content;
   final String name;
@@ -22,10 +24,13 @@ class DraggableList {
 
 class DraggableListItem {
   String text;
-  File? image;
+  TextAlign? alignment;
+  Color? backgroundColor;
+  TextStyle? style;
+  File? file;
 
   DraggableListItem({
     required this.text,
-    this.image,
+    this.file,
   });
 }
