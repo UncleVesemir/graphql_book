@@ -2,18 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:graphql_book/src/presentation/screens/text_edit/model.dart';
 import 'package:graphql_book/src/presentation/styles/fonts.dart';
 
 class DraggableImageWidget extends StatefulWidget {
-  final String name;
-  final File file;
-  final Function(String text) onChanged;
+  final DraggableListItem item;
+  final Function(DraggableListItem item) onChangedItem;
   final Function(Key key) onDelete;
   const DraggableImageWidget({
-    required this.onChanged,
+    required this.onChangedItem,
     required this.onDelete,
-    required this.file,
-    required this.name,
+    required this.item,
     required Key key,
   }) : super(key: key);
 
@@ -22,6 +21,10 @@ class DraggableImageWidget extends StatefulWidget {
 }
 
 class _DraggableImageWidgetState extends State<DraggableImageWidget> {
+  void _onChangedItem() {
+    widget.onChangedItem(widget.item.copyWith());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Slidable(
@@ -43,12 +46,12 @@ class _DraggableImageWidgetState extends State<DraggableImageWidget> {
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         dismissible: DismissiblePane(
-          onDismissed: () => widget.onChanged(widget.name),
+          onDismissed: () => _onChangedItem(),
         ),
         children: [
           SlidableAction(
             flex: 4,
-            onPressed: (ctx) => widget.onChanged(widget.name),
+            onPressed: (ctx) => _onChangedItem(),
             backgroundColor: Colors.deepOrange[200]!,
             foregroundColor: Colors.white,
             icon: Icons.save,
@@ -67,13 +70,13 @@ class _DraggableImageWidgetState extends State<DraggableImageWidget> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.file(
-                      widget.file,
+                      widget.item.file!,
                       width: double.infinity,
                       fit: BoxFit.fitWidth,
                     ),
                   ),
                   const SizedBox(height: 5),
-                  Text(widget.name, style: AppFonts.smallFont)
+                  Text(widget.item.text, style: AppFonts.smallFont)
                 ],
               ),
             ),

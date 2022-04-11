@@ -36,4 +36,11 @@ class AppFonts {
     fontWeight: FontWeight.w600,
     color: Colors.black.withOpacity(0.6),
   );
+
+  static final time = TextStyle(
+    fontSize: 10,
+    fontFamily: _regular,
+    fontWeight: FontWeight.w400,
+    color: Colors.black.withOpacity(0.6),
+  );
 }

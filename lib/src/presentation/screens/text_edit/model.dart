@@ -14,23 +14,83 @@ class BookData {
 
 class DraggableList {
   String header;
+  bool isAttached;
+  TextAlign? alignment;
+  Color? backgroundColor;
+  Color? fontColor;
+  FontWeight? fontWeight;
   final List<DraggableListItem> items;
 
   DraggableList({
     required this.header,
+    required this.isAttached,
     required this.items,
+    this.alignment,
+    this.backgroundColor,
+    this.fontColor,
+    this.fontWeight,
   });
+
+  DraggableList copyWith({
+    String? header,
+    List<DraggableListItem>? items,
+    TextAlign? alignment,
+    bool? isAttached,
+    Color? backgroundColor,
+    Color? fontColor,
+    FontWeight? fontWeight,
+    File? file,
+  }) =>
+      DraggableList(
+        isAttached: isAttached ?? this.isAttached,
+        header: header ?? this.header,
+        items: items ?? this.items,
+        alignment: alignment ?? this.alignment,
+        backgroundColor: backgroundColor ?? this.backgroundColor,
+        fontColor: fontColor ?? this.fontColor,
+        fontWeight: fontWeight ?? this.fontWeight,
+      );
 }
 
 class DraggableListItem {
   String text;
+  bool isAttached;
+  DateTime time;
   TextAlign? alignment;
   Color? backgroundColor;
-  TextStyle? style;
+  Color? fontColor;
+  FontWeight? fontWeight;
   File? file;
 
   DraggableListItem({
     required this.text,
+    required this.isAttached,
+    required this.time,
+    this.alignment,
+    this.backgroundColor,
+    this.fontColor,
+    this.fontWeight,
     this.file,
   });
+
+  DraggableListItem copyWith({
+    String? text,
+    DateTime? time,
+    bool? isAttached,
+    TextAlign? alignment,
+    Color? backgroundColor,
+    Color? fontColor,
+    FontWeight? fontWeight,
+    File? file,
+  }) =>
+      DraggableListItem(
+        text: text ?? this.text,
+        time: time ?? this.time,
+        isAttached: isAttached ?? this.isAttached,
+        alignment: alignment ?? this.alignment,
+        backgroundColor: backgroundColor ?? this.backgroundColor,
+        fontColor: fontColor ?? this.fontColor,
+        fontWeight: fontWeight ?? this.fontWeight,
+        file: file ?? this.file,
+      );
 }

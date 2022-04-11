@@ -71,14 +71,23 @@ class _TextPageState extends State<TextPage>
 
   void _addText(int index) {
     setState(() {
-      allLists[index].items.add(DraggableListItem(text: '...'));
+      allLists[index].items.add(DraggableListItem(
+            text: '...',
+            isAttached: false,
+            time: DateTime.now(),
+          ));
       _initWidgets();
     });
   }
 
   void _addImage(File file, String name, int index) {
     setState(() {
-      allLists[index].items.add(DraggableListItem(text: name, file: file));
+      allLists[index].items.add(DraggableListItem(
+            text: name,
+            isAttached: false,
+            file: file,
+            time: DateTime.now(),
+          ));
       _initWidgets();
     });
   }
@@ -102,7 +111,13 @@ class _TextPageState extends State<TextPage>
 
   void _addList() {
     setState(() {
-      allLists.add(DraggableList(header: 'Header', items: []));
+      allLists.add(
+        DraggableList(
+          header: 'Header',
+          isAttached: false,
+          items: [],
+        ),
+      );
       lists.add(DragAndDropList(children: []));
       _initWidgets();
     });
@@ -110,16 +125,16 @@ class _TextPageState extends State<TextPage>
 
   /// UPDATE
 
-  void _onChanged(String text, int listIndex, int itemIndex) {
+  void _onChanged(DraggableListItem item, int listIndex, int itemIndex) {
     setState(() {
-      allLists[listIndex].items[itemIndex].text = text;
+      allLists[listIndex].items[itemIndex] = item;
       _initWidgets();
     });
   }
 
-  void _onHeaderChanged(String text, int index) {
+  void _onHeaderChanged(DraggableList list, int index) {
     setState(() {
-      allLists[index].header = text;
+      allLists[index] = list;
       _initWidgets();
     });
   }
@@ -191,10 +206,11 @@ class _TextPageState extends State<TextPage>
   Widget _buildFloatingButton() {
     return FloatingActionButton(
       onPressed: _addList,
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.deepOrange[100],
+      splashColor: Colors.deepOrange,
       child: const Icon(
         Icons.add,
-        size: 26,
+        size: 20,
         color: Colors.white,
       ),
     );
@@ -226,9 +242,9 @@ class _TextPageState extends State<TextPage>
           padding: const EdgeInsets.all(8),
           child: DraggableTextWidget(
             key: UniqueKey(),
-            text: list.header,
+            list: list,
             isHeader: true,
-            onChanged: (text) => _onHeaderChanged(text, index),
+            onChangedList: (list) => _onHeaderChanged(list, index),
             onDelete: (key) => _deleteList(index: index),
             onAddText: (key) => _addText(index),
             onAddImage: (key) async => await _attachFile(index),
@@ -244,9 +260,8 @@ class _TextPageState extends State<TextPage>
                     DragAndDropItem(
                       child: DraggableImageWidget(
                         key: UniqueKey(),
-                        name: e.text,
-                        file: e.file!,
-                        onChanged: (text) => _onChanged(text, index, i),
+                        item: e,
+                        onChangedItem: (item) => _onChanged(item, index, i),
                         onDelete: (key) =>
                             _deleteTextItem(listIndex: index, itemIndex: i),
                       ),
@@ -258,10 +273,10 @@ class _TextPageState extends State<TextPage>
                     DragAndDropItem(
                       child: DraggableTextWidget(
                         key: UniqueKey(),
-                        text: e.text,
+                        item: e,
                         onAddImage: (key) {},
                         onAddText: (key) {},
-                        onChanged: (text) => _onChanged(text, index, i),
+                        onChangedItem: (item) => _onChanged(item, index, i),
                         onDelete: (key) =>
                             _deleteTextItem(listIndex: index, itemIndex: i),
                       ),
