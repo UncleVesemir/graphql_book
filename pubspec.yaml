@@ -18,11 +18,13 @@ dependencies:
   drag_and_drop_lists: ^0.3.2+2
   dotted_border: ^2.0.0+2
   flutter_slidable: ^1.2.0
+  clickable_list_wheel_view: ^0.0.4
   hexcolor: ^2.0.6
 
   # Utils
   visibility_detector: ^0.2.2
   intl: ^0.17.0
+
 
   # Attach files
   file_picker: ^4.5.1

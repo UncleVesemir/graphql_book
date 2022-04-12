@@ -1,3 +1,4 @@
+import 'package:clickable_list_wheel_view/clickable_list_wheel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -80,21 +81,29 @@ class ListWheelScrollViewX extends StatelessWidget {
 
     return RotatedBox(
       quarterTurns: scrollDirection == Axis.horizontal ? 3 : 0,
-      child: ListWheelScrollView.useDelegate(
-        controller: controller,
-        physics: const FixedExtentScrollPhysics(),
-        diameterRatio: diameterRatio,
-        perspective: perspective,
-        offAxisFraction: offAxisFraction,
-        useMagnifier: useMagnifier,
-        magnification: magnification,
-        overAndUnderCenterOpacity: overAndUnderCenterOpacity,
-        itemExtent: itemExtent,
-        squeeze: squeeze,
-        onSelectedItemChanged: onSelectedItemChanged,
-        renderChildrenOutsideViewport: renderChildrenOutsideViewport,
-        clipBehavior: clipBehavior,
-        childDelegate: _childDelegate,
+      child: ClickableListWheelScrollView(
+        itemCount: children!.length,
+        itemHeight: 240,
+        scrollController: controller!,
+        onItemTapCallback: (index) {
+          print(index);
+        },
+        child: ListWheelScrollView.useDelegate(
+          controller: controller,
+          // physics: const FixedExtentScrollPhysics(),
+          diameterRatio: diameterRatio,
+          perspective: perspective,
+          offAxisFraction: offAxisFraction,
+          useMagnifier: useMagnifier,
+          magnification: magnification,
+          overAndUnderCenterOpacity: overAndUnderCenterOpacity,
+          itemExtent: itemExtent,
+          squeeze: squeeze,
+          onSelectedItemChanged: onSelectedItemChanged,
+          renderChildrenOutsideViewport: renderChildrenOutsideViewport,
+          clipBehavior: clipBehavior,
+          childDelegate: _childDelegate,
+        ),
       ),
     );
   }

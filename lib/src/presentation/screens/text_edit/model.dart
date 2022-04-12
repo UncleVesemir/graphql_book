@@ -54,7 +54,7 @@ class DraggableList {
 
 class DraggableListItem {
   String text;
-  bool isAttached;
+  bool isBookmarked;
   DateTime time;
   TextAlign? alignment;
   Color? backgroundColor;
@@ -64,7 +64,7 @@ class DraggableListItem {
 
   DraggableListItem({
     required this.text,
-    required this.isAttached,
+    required this.isBookmarked,
     required this.time,
     this.alignment,
     this.backgroundColor,
@@ -86,7 +86,7 @@ class DraggableListItem {
       DraggableListItem(
         text: text ?? this.text,
         time: time ?? this.time,
-        isAttached: isAttached ?? this.isAttached,
+        isBookmarked: isAttached ?? this.isBookmarked,
         alignment: alignment ?? this.alignment,
         backgroundColor: backgroundColor ?? this.backgroundColor,
         fontColor: fontColor ?? this.fontColor,

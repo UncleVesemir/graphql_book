@@ -75,7 +75,7 @@ class _DraggableTextWidgetState extends State<DraggableTextWidget> {
 
   void _initText() {
     if (widget.item != null) {
-      isAttached = widget.item!.isAttached;
+      isAttached = widget.item!.isBookmarked;
       if (widget.item!.text != '...') _controller.text = widget.item!.text;
       if (widget.item!.fontWeight != null) {
         selectedWeight = _textWeights

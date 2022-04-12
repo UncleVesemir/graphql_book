@@ -4,37 +4,70 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+List<AlicePage> data = const [
+  AlicePage(text: '1'),
+  AlicePage(text: '2'),
+  AlicePage(text: '3'),
+  AlicePage(text: '4'),
+  AlicePage(text: '5'),
+  AlicePage(text: '6'),
+  AlicePage(text: '7'),
+  AlicePage(text: '8'),
+  AlicePage(text: '9'),
+  AlicePage(text: '10'),
+  AlicePage(text: '11'),
+  AlicePage(text: '12'),
+  AlicePage(text: '13'),
+  AlicePage(text: '14'),
+  AlicePage(text: '15'),
+  AlicePage(text: '16'),
+  AlicePage(text: '17'),
+  AlicePage(text: '18'),
+  AlicePage(text: '19'),
+  AlicePage(text: '20'),
+];
+
 void main() {
-  runApp(const MyApp());
+  runApp(const TestPagesApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class TestPagesApp extends StatelessWidget {
+  const TestPagesApp({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(),
+      home: PagesController(data: data),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class PagesController extends StatefulWidget {
+  final List<AlicePage> data;
+  const PagesController({
+    required this.data,
+    Key? key,
+  }) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<PagesController> createState() => _PagesControllerState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  List<PageTurnWidget> children = [];
-  List<GlobalObjectKey<_PageTurnWidgetState>> keys = [];
+class _PagesControllerState extends State<PagesController> {
+  List<PageTurnWidget> widgets = [];
+  List<GlobalObjectKey<_PageTurnWidgetState>> states = [];
   GlobalObjectKey<_PageTurnWidgetState>? activePage;
+  PageTurnWidget test = PageTurnWidget(
+    key: UniqueKey(),
+    backgroundColor: Colors.white,
+    child: const AlicePage(
+      text: '1',
+    ),
+  );
   int activeIndex = 0;
 
   double direction = 0.0;
@@ -47,39 +80,60 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _initChildren() {
-    for (var i = 0; i < 5; i++) {
+    for (var i = activeIndex; i < 4; i++) {
       GlobalObjectKey<_PageTurnWidgetState> key = GlobalObjectKey(i);
-      AlicePage page = AlicePage(text: i.toString());
-      keys.add(key);
-      children.add(
+      AlicePage page = widget.data[i];
+      widgets.add(
         PageTurnWidget(
           key: key,
-          backgroundColor: Colors.deepOrange[100]!,
+          backgroundColor: Colors.white,
           child: page,
         ),
       );
+      states.add(key);
     }
     setState(() {
-      children = children.reversed.toList();
-      activePage = keys[0];
+      widgets = widgets.reversed.toList();
+      activePage = states[0];
     });
   }
 
   void next() {
-    if (activePage != null && activeIndex < keys.length - 1) {
+    print(
+        '$activeIndex - index ${widgets.length} - length ${states.length} - length');
+    if (activePage != null && activeIndex < widget.data.length - 1) {
       setState(() {
-        activePage!.currentState!.back();
+        activePage?.currentState?.back().then((value) {
+          if (activeIndex - 2 >= 0) {
+            states.first.currentState?.dispose();
+            states.removeAt(0);
+            GlobalObjectKey<_PageTurnWidgetState> key =
+                GlobalObjectKey(activeIndex + 1);
+            AlicePage page = widget.data[activeIndex + 1];
+            widgets.add(
+              PageTurnWidget(
+                key: key,
+                backgroundColor: Colors.white,
+                child: page,
+              ),
+            );
+            states.add(key);
+            widgets.removeAt(activeIndex - 2);
+          }
+        });
         activeIndex++;
-        activePage = keys[activeIndex];
+        activePage = states[activeIndex];
       });
     }
+    print(
+        '$activeIndex - index ${widgets.length} - length ${states.length} - length');
   }
 
   void previous() {
     if (activePage != null && activeIndex > 0) {
       setState(() {
         activeIndex--;
-        activePage = keys[activeIndex];
+        activePage = states[activeIndex];
         activePage!.currentState!.forward();
       });
     }
@@ -103,23 +157,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _backStart() async {
-    if (activeIndex == keys.length - 1) {
+    if (activeIndex == states.length - 1) {
       for (var i = activeIndex; i > 0; i--) {
         await Future.delayed(const Duration(milliseconds: 60)).then((value) {
           setState(() {
             activeIndex--;
-            activePage = keys[activeIndex];
+            activePage = states[activeIndex];
             activePage!.currentState!.forward();
           });
         });
       }
     } else {
-      for (var i = activeIndex; i < keys.length - 1; i++) {
+      for (var i = activeIndex; i < states.length - 1; i++) {
         await Future.delayed(const Duration(milliseconds: 60)).then((value) {
           setState(() {
             activePage!.currentState!.back();
             activeIndex++;
-            activePage = keys[activeIndex];
+            activePage = states[activeIndex];
           });
         });
       }
@@ -143,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onHorizontalDragEnd: _determineDirection,
         child: Stack(
           fit: StackFit.expand,
-          children: children,
+          children: widgets,
         ),
       ),
     );
@@ -247,6 +301,7 @@ class _PageTurnWidgetState extends State<PageTurnWidget>
   @override
   void initState() {
     super.initState();
+    print('inited');
     _controller = AnimationController(
       value: 1.0,
       duration: const Duration(milliseconds: 450),
@@ -256,6 +311,7 @@ class _PageTurnWidgetState extends State<PageTurnWidget>
 
   @override
   void dispose() {
+    print('disposed');
     _controller?.dispose();
     super.dispose();
   }
@@ -269,15 +325,17 @@ class _PageTurnWidgetState extends State<PageTurnWidget>
     }
   }
 
-  void forward() {
+  Future<bool> forward() async {
     if (_controller?.status == AnimationStatus.dismissed ||
         _controller?.status == AnimationStatus.reverse) {
-      _controller?.forward();
+      await _controller?.forward();
     }
+    return Future.value(true);
   }
 
-  void back() {
-    _controller?.reverse();
+  Future<bool> back() async {
+    await _controller?.reverse();
+    return Future.value(true);
   }
 
   @override
@@ -360,7 +418,9 @@ class _PageTurnEffect extends CustomPainter {
     final c = canvas;
     final shadowXf = (wHRatio - movX);
     final shadowSigma =
-        Shadow.convertRadiusToSigma(8.0 + (32.0 * (1.0 - shadowXf)));
+        Shadow.convertRadiusToSigma(8.0 + (2.0 * (1.0 - shadowXf)));
+
+    /// 2 -> 32 bigger shadow
     final pageRect = Rect.fromLTRB(0.0, 0.0, w * shadowXf, h);
     c.drawRect(pageRect, Paint()..color = backgroundColor);
     c.drawRect(

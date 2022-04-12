@@ -38,14 +38,14 @@ class _TextPageState extends State<TextPage>
   void _initAnimations() async {
     animationController ??= AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 100),
       value: 1.0,
     );
     heightAnimation =
         Tween(begin: 0.0, end: 60.0).animate(animationController!);
     opacityAnimation =
         Tween(begin: 0.0, end: 1.0).animate(animationController!);
-    _scrollController.addListener(() {
+    _scrollController.addListener(() async {
       setState(() {
         if (_scrollController.position.userScrollDirection ==
                 ScrollDirection.reverse &&
@@ -73,7 +73,7 @@ class _TextPageState extends State<TextPage>
     setState(() {
       allLists[index].items.add(DraggableListItem(
             text: '...',
-            isAttached: false,
+            isBookmarked: false,
             time: DateTime.now(),
           ));
       _initWidgets();
@@ -84,7 +84,7 @@ class _TextPageState extends State<TextPage>
     setState(() {
       allLists[index].items.add(DraggableListItem(
             text: name,
-            isAttached: false,
+            isBookmarked: false,
             file: file,
             time: DateTime.now(),
           ));

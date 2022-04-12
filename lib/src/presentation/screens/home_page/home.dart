@@ -13,6 +13,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final ScrollController _scrollController = ScrollController();
+
   late List<BookWidget> books;
   int selectedBook = 0;
 
@@ -34,24 +36,88 @@ class _HomePageState extends State<HomePage> {
         key: UniqueKey(),
       );
 
+  void _onItemChanged(int index) => setState(() => selectedBook = index);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.deepOrange[100],
-      body: GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => const TextPage()));
-        },
-        child: ListWheelScrollViewX(
-          scrollDirection: Axis.horizontal,
-          itemExtent: 240,
-          squeeze: 0.9,
-          perspective: 0.0001,
-          children: books,
-        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Flexible(
+            flex: 3,
+            child: ListWheelScrollViewX(
+              controller: _scrollController,
+              clipBehavior: Clip.hardEdge,
+              scrollDirection: Axis.horizontal,
+              itemExtent: 240,
+              squeeze: 0.9,
+              perspective: 0.0001,
+              children: books,
+              onSelectedItemChanged: _onItemChanged,
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const TextPage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(18),
+                    primary: Colors.deepOrange[200],
+                  ),
+                  child: const Icon(Icons.bookmark),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const TextPage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(18),
+                    primary: Colors.deepOrange[200],
+                  ),
+                  child: const Icon(Icons.edit),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const TextPage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(18),
+                    primary: Colors.deepOrange[200],
+                  ),
+                  child: const Icon(Icons.add),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
