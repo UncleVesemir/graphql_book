@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 List<AlicePage> data = const [
+  AlicePage(text: '0'),
   AlicePage(text: '1'),
   AlicePage(text: '2'),
   AlicePage(text: '3'),
@@ -58,17 +59,17 @@ class PagesController extends StatefulWidget {
 }
 
 class _PagesControllerState extends State<PagesController> {
+  final int _first = 0;
+  final int _middle = 1;
+  final int _last = 2;
+
+  bool onNextRebuild = false;
+  bool onPreviousRebuild = false;
+
   List<PageTurnWidget> widgets = [];
   List<GlobalObjectKey<_PageTurnWidgetState>> states = [];
   GlobalObjectKey<_PageTurnWidgetState>? activePage;
-  PageTurnWidget test = PageTurnWidget(
-    key: UniqueKey(),
-    backgroundColor: Colors.white,
-    child: const AlicePage(
-      text: '1',
-    ),
-  );
-  int activeIndex = 0;
+  int dataPageIndex = 0;
 
   double direction = 0.0;
   int sensitivity = 5;
@@ -80,7 +81,8 @@ class _PagesControllerState extends State<PagesController> {
   }
 
   void _initChildren() {
-    for (var i = activeIndex; i < 4; i++) {
+    print('init children');
+    for (var i = dataPageIndex; i < 3; i++) {
       GlobalObjectKey<_PageTurnWidgetState> key = GlobalObjectKey(i);
       AlicePage page = widget.data[i];
       widgets.add(
@@ -94,47 +96,92 @@ class _PagesControllerState extends State<PagesController> {
     }
     setState(() {
       widgets = widgets.reversed.toList();
-      activePage = states[0];
+      states = states.reversed.toList();
     });
   }
 
-  void next() {
-    print(
-        '$activeIndex - index ${widgets.length} - length ${states.length} - length');
-    if (activePage != null && activeIndex < widget.data.length - 1) {
-      setState(() {
-        activePage?.currentState?.back().then((value) {
-          if (activeIndex - 2 >= 0) {
-            states.first.currentState?.dispose();
-            states.removeAt(0);
-            GlobalObjectKey<_PageTurnWidgetState> key =
-                GlobalObjectKey(activeIndex + 1);
-            AlicePage page = widget.data[activeIndex + 1];
-            widgets.add(
-              PageTurnWidget(
-                key: key,
-                backgroundColor: Colors.white,
-                child: page,
-              ),
-            );
-            states.add(key);
-            widgets.removeAt(activeIndex - 2);
-          }
-        });
-        activeIndex++;
-        activePage = states[activeIndex];
-      });
-    }
-    print(
-        '$activeIndex - index ${widgets.length} - length ${states.length} - length');
+  @override
+  void didUpdateWidget(PagesController oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print('didUpdateW');
   }
 
-  void previous() {
-    if (activePage != null && activeIndex > 0) {
-      setState(() {
-        activeIndex--;
-        activePage = states[activeIndex];
-        activePage!.currentState!.forward();
+  void printData() {
+    for (var i = 0; i < states.length; i++) {
+      print('$i state - ${states[i]}');
+    }
+
+    for (var i = 0; i < widgets.length; i++) {
+      print('$i key - ${widgets[i]}');
+    }
+  }
+
+  Future<void> next() async {
+    if (dataPageIndex < widget.data.length - 1) {
+      states[_last].currentState!.back().then((value) {
+        var last = states[_last];
+        var lastKey = widgets[_last];
+        states.removeAt(_last);
+        states.insert(_first, last);
+        widgets.removeAt(_last);
+        widgets.insert(_first, lastKey);
+        //
+        dataPageIndex++;
+        _addNextPage();
+        setState(() {});
+      });
+    }
+  }
+
+  void _addNextPage() {
+    GlobalObjectKey<_PageTurnWidgetState> key =
+        GlobalObjectKey(dataPageIndex + 1);
+    AlicePage page = widget.data[dataPageIndex + 1];
+    PageTurnWidget _page =
+        PageTurnWidget(key: key, backgroundColor: Colors.white, child: page);
+    _replace(_middle, key, _page);
+  }
+
+  void _addPreviousPage() {
+    GlobalObjectKey<_PageTurnWidgetState> key =
+        GlobalObjectKey(dataPageIndex - 1);
+    AlicePage page = widget.data[dataPageIndex - 1];
+    final PageTurnWidget _page = PageTurnWidget(
+      key: key,
+      backgroundColor: Colors.white,
+      child: page,
+      amount: 0.0,
+    );
+    _replace(_first, key, _page);
+  }
+
+  void _replace(
+    int pos,
+    GlobalObjectKey<_PageTurnWidgetState> key,
+    PageTurnWidget page,
+  ) {
+    states.removeAt(pos);
+    states.insert(pos, key);
+    widgets.removeAt(pos);
+    widgets.insert(pos, page);
+  }
+
+  Future<void> previous() async {
+    if (dataPageIndex > 0) {
+      var last = states[_last];
+      var middle = states[_middle];
+      var first = states[_first];
+      var lastKey = widgets[_last];
+      var middleKey = widgets[_middle];
+      var firstKey = widgets[_first];
+      _replace(_last, first, firstKey);
+      _replace(_middle, last, lastKey);
+      _replace(_first, middle, middleKey);
+      setState(() {});
+      states[_last].currentState!.forward().then((value) {
+        dataPageIndex--;
+        _addPreviousPage();
+        setState(() {});
       });
     }
   }
@@ -145,6 +192,7 @@ class _PagesControllerState extends State<PagesController> {
   }
 
   void _updateDirection(DragUpdateDetails details) {
+    _changeValue(details.globalPosition.dx * 0.01);
     if (details.delta.dx > sensitivity) {
       setState(() {
         direction = details.delta.dx;
@@ -156,36 +204,34 @@ class _PagesControllerState extends State<PagesController> {
     }
   }
 
-  void _backStart() async {
-    if (activeIndex == states.length - 1) {
-      for (var i = activeIndex; i > 0; i--) {
-        await Future.delayed(const Duration(milliseconds: 60)).then((value) {
-          setState(() {
-            activeIndex--;
-            activePage = states[activeIndex];
-            activePage!.currentState!.forward();
-          });
-        });
-      }
-    } else {
-      for (var i = activeIndex; i < states.length - 1; i++) {
-        await Future.delayed(const Duration(milliseconds: 60)).then((value) {
-          setState(() {
-            activePage!.currentState!.back();
-            activeIndex++;
-            activePage = states[activeIndex];
-          });
-        });
-      }
-    }
+  Widget _buildFloating() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const SizedBox(width: 250),
+        FloatingActionButton(
+          onPressed: () async => previous(),
+          backgroundColor: Colors.white,
+          child: const Icon(
+            Icons.arrow_back_ios_sharp,
+            color: Colors.black,
+          ),
+        ),
+        FloatingActionButton(
+          onPressed: () async => next(),
+          backgroundColor: Colors.white,
+          child: const Icon(
+            Icons.arrow_forward_ios_sharp,
+            color: Colors.black,
+          ),
+        ),
+      ],
+    );
   }
 
-  Widget _buildFloating() {
-    return FloatingActionButton(
-      onPressed: () async => _backStart(),
-      backgroundColor: Colors.deepOrange,
-      child: const Icon(Icons.arrow_forward_ios_sharp),
-    );
+  void _changeValue(double value) {
+    states.last.currentState!._controller!.value = value / 3.8;
+    // states.last.currentState!._controller!.value = value.abs();
   }
 
   @override
@@ -283,10 +329,12 @@ class PageTurnWidget extends StatefulWidget {
     required Key key,
     required this.backgroundColor,
     required this.child,
+    this.amount,
   }) : super(key: key);
 
   final Color backgroundColor;
   final Widget child;
+  final double? amount;
 
   @override
   _PageTurnWidgetState createState() => _PageTurnWidgetState();
@@ -301,17 +349,18 @@ class _PageTurnWidgetState extends State<PageTurnWidget>
   @override
   void initState() {
     super.initState();
-    print('inited');
+    print('inited ${widget.key}');
     _controller = AnimationController(
       value: 1.0,
-      duration: const Duration(milliseconds: 450),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
+    widget.amount != null ? _controller!.value = widget.amount! : 1.0;
   }
 
   @override
   void dispose() {
-    print('disposed');
+    print('disposed ${widget.key}');
     _controller?.dispose();
     super.dispose();
   }
@@ -420,7 +469,7 @@ class _PageTurnEffect extends CustomPainter {
     final shadowSigma =
         Shadow.convertRadiusToSigma(8.0 + (2.0 * (1.0 - shadowXf)));
 
-    /// 2 -> 32 bigger shadow
+    /// 0 -> 2 -> N bigger shadow
     final pageRect = Rect.fromLTRB(0.0, 0.0, w * shadowXf, h);
     c.drawRect(pageRect, Paint()..color = backgroundColor);
     c.drawRect(
