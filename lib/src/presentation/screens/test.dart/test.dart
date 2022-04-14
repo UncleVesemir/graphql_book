@@ -237,13 +237,17 @@ class _PagesControllerState extends State<PagesController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       floatingActionButton: _buildFloating(),
       body: GestureDetector(
         onHorizontalDragUpdate: _updateDirection,
         onHorizontalDragEnd: _determineDirection,
-        child: Stack(
-          fit: StackFit.expand,
-          children: widgets,
+        child: Padding(
+          padding: const EdgeInsets.all(0.0),
+          child: Stack(
+            fit: StackFit.expand,
+            children: widgets,
+          ),
         ),
       ),
     );
@@ -262,61 +266,67 @@ class AlicePage extends StatelessWidget {
     return DefaultTextStyle.merge(
       style: const TextStyle(fontSize: 16.0),
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                "CHAPTER ${text}",
-                style: const TextStyle(
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const Text(
-                "Down the Rabbit-Hole",
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32.0),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Expanded(
-                    child: Text(
-                        "Alice was beginning to get very tired of sitting by her sister on the bank, and of"
-                        " having nothing to do: once or twice she had peeped into the book her sister was "
-                        "reading, but it had no pictures or conversations in it, `and what is the use of "
-                        "a book,' thought Alice `without pictures or conversation?'"),
+        bottom: false,
+        // top: false,
+        child: Container(
+          color: Colors.white,
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  "CHAPTER ${text}",
+                  style: const TextStyle(
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.bold,
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 12.0),
-                    color: Colors.black26,
-                    width: 160.0,
-                    height: 220.0,
-                    child: const Placeholder(),
+                  textAlign: TextAlign.center,
+                ),
+                const Text(
+                  "Down the Rabbit-Hole",
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-              const Text(
-                "So she was considering in her own mind (as well as she could, for the hot day made her "
-                "feel very sleepy and stupid), whether the pleasure of making a daisy-chain would be "
-                "worth the trouble of getting up and picking the daisies, when suddenly a White "
-                "Rabbit with pink eyes ran close by her.\n"
-                "\n"
-                "There was nothing so very remarkable in that; nor did Alice think it so very much out "
-                "of the way to hear the Rabbit say to itself, `Oh dear! Oh dear! I shall be "
-                "late!' (when she thought it over afterwards, it occurred to her that she ought to "
-                "have wondered at this, but at the time it all seemed quite natural); but when the "
-                "Rabbit actually took",
-              ),
-            ],
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32.0),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Expanded(
+                      child: Text(
+                          "Alice was beginning to get very tired of sitting by her sister on the bank, and of"
+                          " having nothing to do: once or twice she had peeped into the book her sister was "
+                          "reading, but it had no pictures or conversations in it, `and what is the use of "
+                          "a book,' thought Alice `without pictures or conversation?'"),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 12.0),
+                      color: Colors.black26,
+                      width: 160.0,
+                      height: 220.0,
+                      child: const Placeholder(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                const Text(
+                    "So she was considering in her own mind (as well as she could, for the hot day made her "
+                    "feel very sleepy and stupid), whether the pleasure of making a daisy-chain would be "
+                    "worth the trouble of getting up and picking the daisies, when suddenly a White "
+                    "Rabbit with pink eyes ran close by her.\n"
+                    "\n"
+                    // "There was nothing so very remarkable in that; nor did Alice think it so very much out "
+                    // "of the way to hear the Rabbit say to itself, `Oh dear! Oh dear! I shall be "
+                    // "late!' (when she thought it over afterwards, it occurred to her that she ought to "
+                    // "have wondered at this, but at the time it all seemed quite natural); but when the "
+                    // "Rabbit actually took",
+                    ),
+              ],
+            ),
           ),
         ),
       ),
@@ -352,7 +362,7 @@ class _PageTurnWidgetState extends State<PageTurnWidget>
     print('inited ${widget.key}');
     _controller = AnimationController(
       value: 1.0,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
     widget.amount != null ? _controller!.value = widget.amount! : 1.0;
@@ -399,7 +409,7 @@ class _PageTurnWidgetState extends State<PageTurnWidget>
     final pixelRatio = MediaQuery.of(context).devicePixelRatio;
     final boundary = _boundaryKey.currentContext?.findRenderObject()
         as RenderRepaintBoundary;
-    final image = await boundary.toImage(pixelRatio: pixelRatio);
+    final image = await boundary.toImage(pixelRatio: pixelRatio - 1);
     setState(() => _image = image);
   }
 
@@ -450,7 +460,7 @@ class _PageTurnEffect extends CustomPainter {
     required this.amount,
     required this.image,
     required this.backgroundColor,
-    this.radius = 0.28,
+    this.radius = 0.32,
   }) : super(repaint: amount);
 
   @override
@@ -462,22 +472,12 @@ class _PageTurnEffect extends CustomPainter {
     final hWRatio = image.height / image.width;
     final hWCorrection = (hWRatio - 1.0) / 2.0;
 
-    final w = size.width.toDouble();
-    final h = size.height.toDouble();
+    final w = size.width.toDouble() - 0; // Padding?
+    final h = size.height.toDouble() - 0; // Padding?
     final c = canvas;
     final shadowXf = (wHRatio - movX);
     final shadowSigma =
         Shadow.convertRadiusToSigma(8.0 + (2.0 * (1.0 - shadowXf)));
-
-    /// 0 -> 2 -> N bigger shadow
-    final pageRect = Rect.fromLTRB(0.0, 0.0, w * shadowXf, h);
-    c.drawRect(pageRect, Paint()..color = backgroundColor);
-    c.drawRect(
-      pageRect,
-      Paint()
-        ..color = Colors.black54
-        ..maskFilter = MaskFilter.blur(BlurStyle.outer, shadowSigma),
-    );
 
     final ip = Paint();
     for (double x = 0; x < size.width; x++) {
@@ -489,7 +489,16 @@ class _PageTurnEffect extends CustomPainter {
       final sr = Rect.fromLTRB(sx, 0.0, sx + 1.0, image.height.toDouble());
       final yv = ((h * calcR * movX) * hWRatio) - hWCorrection;
       final ds = (yv * v);
-      final dr = Rect.fromLTRB(xv * w, 0.0 - ds, xv * w + 1.0, h + ds);
+      //
+      /// 0 -> 2 -> N bigger shadow
+      // final pageRect = Rect.fromLTRB(0.0, 0.0, w * shadowXf, h);
+      final pageRect = Rect.fromLTRB(xv * w, 0.0 + 45, xv * w + 60.0, h + ds);
+      // c.drawRect(pageRect, Paint()..color = backgroundColor);
+      c.drawRect(pageRect, Paint()..color = Colors.black.withOpacity(0.005)
+          // ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 10),
+          );
+      //
+      final dr = Rect.fromLTRB(xv * w, 0.0 - ds, xv * w + 1.0, h + ds); // ?
       c.drawImageRect(image, sr, dr, ip);
     }
   }
