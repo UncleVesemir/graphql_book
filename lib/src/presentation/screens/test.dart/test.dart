@@ -28,6 +28,13 @@ List<AlicePage> data = const [
   AlicePage(text: '20'),
 ];
 
+class Coord {
+  final double x;
+  final double y;
+
+  const Coord({required this.x, required this.y});
+}
+
 void main() {
   runApp(const TestPagesApp());
 }
@@ -72,7 +79,9 @@ class _PagesControllerState extends State<PagesController> {
   int dataPageIndex = 0;
 
   double direction = 0.0;
-  int sensitivity = 5;
+  double sensitivity = 0.01;
+
+  Coord? dragStartCoord;
 
   @override
   void initState() {
@@ -189,10 +198,10 @@ class _PagesControllerState extends State<PagesController> {
   void _determineDirection(DragEndDetails details) {
     if (direction > sensitivity) previous();
     if (direction < -sensitivity) next();
+    setState(() => dragStartCoord = null);
   }
 
   void _updateDirection(DragUpdateDetails details) {
-    _changeValue(details.globalPosition.dx * 0.01);
     if (details.delta.dx > sensitivity) {
       setState(() {
         direction = details.delta.dx;
@@ -202,6 +211,11 @@ class _PagesControllerState extends State<PagesController> {
         direction = details.delta.dx;
       });
     }
+    double x = details.globalPosition.dx / 100;
+    double y = details.globalPosition.dy / 100;
+    var dist = math.sqrt(math.pow(x - dragStartCoord!.x, 2) +
+        math.pow(y - dragStartCoord!.y, 2));
+    _changeValue(direction > sensitivity ? -dist : dist);
   }
 
   Widget _buildFloating() {
@@ -229,9 +243,21 @@ class _PagesControllerState extends State<PagesController> {
     );
   }
 
+  void _startDrag(DragStartDetails details) {
+    setState(() {
+      dragStartCoord = Coord(
+        x: details.globalPosition.dx / 100,
+        y: details.globalPosition.dy / 100,
+      );
+    });
+  }
+
   void _changeValue(double value) {
-    states.last.currentState!._controller!.value = value / 3.8;
-    // states.last.currentState!._controller!.value = value.abs();
+    if (value > 0) {
+      states.last.currentState!._controller!.value = (3.8 - value) / 3.8;
+    } else if (value < 0 && states.last.currentState!._controller!.value != 1) {
+      states.last.currentState!._controller!.value = (3.8 + value) / 3.8;
+    }
   }
 
   @override
@@ -242,6 +268,7 @@ class _PagesControllerState extends State<PagesController> {
       body: GestureDetector(
         onHorizontalDragUpdate: _updateDirection,
         onHorizontalDragEnd: _determineDirection,
+        onHorizontalDragStart: _startDrag,
         child: Padding(
           padding: const EdgeInsets.all(0.0),
           child: Stack(
@@ -362,7 +389,7 @@ class _PageTurnWidgetState extends State<PageTurnWidget>
     print('inited ${widget.key}');
     _controller = AnimationController(
       value: 1.0,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 400),
       vsync: this,
     );
     widget.amount != null ? _controller!.value = widget.amount! : 1.0;
@@ -460,7 +487,7 @@ class _PageTurnEffect extends CustomPainter {
     required this.amount,
     required this.image,
     required this.backgroundColor,
-    this.radius = 0.32,
+    this.radius = 0.19,
   }) : super(repaint: amount);
 
   @override
@@ -492,13 +519,13 @@ class _PageTurnEffect extends CustomPainter {
       //
       /// 0 -> 2 -> N bigger shadow
       // final pageRect = Rect.fromLTRB(0.0, 0.0, w * shadowXf, h);
-      final pageRect = Rect.fromLTRB(xv * w, 0.0 + 45, xv * w + 60.0, h + ds);
+      final pageRect = Rect.fromLTRB(xv * w, 0.0 + 45, xv * w + 60.0, h - ds);
       // c.drawRect(pageRect, Paint()..color = backgroundColor);
       c.drawRect(pageRect, Paint()..color = Colors.black.withOpacity(0.005)
           // ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 10),
           );
       //
-      final dr = Rect.fromLTRB(xv * w, 0.0 - ds, xv * w + 1.0, h + ds); // ?
+      final dr = Rect.fromLTRB(xv * w, 0.0 - ds, xv * w + 1.0, h - ds); // ?
       c.drawImageRect(image, sr, dr, ip);
     }
   }
