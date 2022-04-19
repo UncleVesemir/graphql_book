@@ -313,10 +313,10 @@ class _TextPageState extends State<TextPage>
                 color: Colors.deepOrange.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                  )
+                  // BoxShadow(
+                  //   color: Colors.black12,
+                  //   blurRadius: 10,
+                  // )
                 ],
               ),
             ),
